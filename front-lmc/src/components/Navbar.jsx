@@ -4,6 +4,12 @@ import { useDarkMode } from '../hooks/useDarkMode'
 import { getSite } from '../services/api'
 import lmcLogo from '../assets/lmc.png'
 
+function isLoggedIn() {
+  const token = localStorage.getItem('lmc-token')
+  const expiry = localStorage.getItem('lmc-tokenExpiry')
+  return token && expiry && Date.now() <= Number(expiry)
+}
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -12,6 +18,7 @@ export default function Navbar() {
   const [intraFormations, setIntraFormations] = useState([])
   const [extraFormations, setExtraFormations] = useState([])
   const [siteName, setSiteName] = useState('LMC')
+  const [loggedIn, setLoggedIn] = useState(isLoggedIn)
   const { dark, toggle } = useDarkMode()
   const location = useLocation()
 
@@ -39,6 +46,7 @@ export default function Navbar() {
     setMenuOpen(false)
     setIntraOpen(false)
     setExtraOpen(false)
+    setLoggedIn(isLoggedIn())
   }, [location])
 
   return (
@@ -121,9 +129,11 @@ export default function Navbar() {
           <Link to="/contact" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
             Contact
           </Link>
-          <a href="/admin" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
-            Dashboard
-          </a>
+          {loggedIn && (
+            <a href="/admin" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
+              Dashboard
+            </a>
+          )}
 
           <button
             onClick={toggle}
