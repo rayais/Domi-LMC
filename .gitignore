@@ -1,7 +1,8 @@
 node_modules/
 dist/
 .env
-back/uploads/
+back/uploads/*
+!back/uploads/.gitkeep
 *.log
 .DS_Store
 Thumbs.db
