@@ -1,0 +1,18 @@
+{
+  "--color-primary": "#2D7EC4",
+  "--color-primary-dark": "#1A5E9E",
+  "--color-primary-light": "#6DB8E6",
+  "--color-accent": "#F4C21D",
+  "--color-accent-dark": "#D89A00",
+  "--color-green": "#76B82A",
+  "--color-green-dark": "#4F8F1F",
+  "--color-green-text": "#6B9E1F",
+  "--color-bg": "#EFF5FB",
+  "--color-text": "#1A2A3A",
+  "--color-text-light": "#5A7A96",
+  "--color-white": "#ffffff",
+  "--color-error": "#d32f2f",
+  "--color-success": "#2e7d32",
+  "--color-info": "#1565c0",
+  "--color-border": "#D0DCE8"
+}

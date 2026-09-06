@@ -1,0 +1,81 @@
+[
+  {
+    "id_article": 1,
+    "titre": "Domiciliation Juridique",
+    "description": [
+      "Adresse commerciale professionnelle",
+      "Réception et tri du courrier",
+      "Notification immédiate par email",
+      "Image professionnelle renforcée",
+      "Accès aux espaces communs",
+      "salle de re"
+    ],
+    "prix": "",
+    "img": "1783412615887.avif"
+  },
+  {
+    "id_article": 2,
+    "titre": "Assistance Administrative",
+    "description": [
+      "Gestion personnalisée du courrier",
+      "Rédaction de correspondances officielles",
+      "Organisation de réunions",
+      "Suivi rigoureux des échéances",
+      "Support administratif dédié"
+    ],
+    "prix": "",
+    "img": "1783412627691.avif"
+  },
+  {
+    "id_article": 3,
+    "titre": "Assistance Juridique et Fiscal",
+    "description": [
+      "Création et modification de sociétés",
+      "Ingénierie Fiscale",
+      "Rédaction de contrats",
+      "Protection Fiscale",
+      "Prise en charge contrôle fiscal"
+    ],
+    "prix": "",
+    "img": "1783412602664.avif"
+  },
+  {
+    "id_article": 4,
+    "titre": "Expertise Comptable",
+    "description": [
+      "Tenue & Révision Comptable",
+      "Conformité Fiscale",
+      "Facturation Électronique",
+      "Reporting & Tableaux de bord",
+      "Audit & Conseil"
+    ],
+    "prix": "",
+    "img": "1783412641800.avif"
+  },
+  {
+    "id_article": 5,
+    "titre": "Bureaux Privatifs",
+    "description": [
+      "Bureaux meublés et équipés",
+      "Connexion internet haut débit",
+      "Climatisation & éclairage optimal",
+      "Accès sécurisé 24h/24",
+      "Services de ménage inclus"
+    ],
+    "prix": "",
+    "img": "1783412653806.avif"
+  },
+  {
+    "id_article": 6,
+    "titre": "Salle de Réunion / Formation",
+    "description": [
+      "Capacité jusqu'à 20 personnes",
+      "Salles modulables",
+      "Matériel de présentation inclus",
+      "Connexion WiFi performante",
+      "Réservation flexible"
+    ],
+    "prix": "",
+    "img": "1783412671838.avif"
+  }
+]

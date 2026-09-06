@@ -1,0 +1,126 @@
+{
+  "intra": [
+    {
+      "id": "intra-001",
+      "nom": "Leadership et Management",
+      "slug": "leadership-management",
+      "logo": "",
+      "imageVitrine": "",
+      "galerie": [],
+      "description": "Développez vos compétences managériales et leadership pour guider vos équipes vers l'excellence.",
+      "descriptionLongue": "Ce programme de formation en leadership et management est conçu pour les managers et cadres souhaitant renforcer leurs compétences en management d'équipe, communication interpersonnelle et prise de décision stratégique. À travers des mises en situation pratiques et des études de cas réels, les participants apprendront à : inspirer et motiver leurs équipes, gérer les conflits de manière constructive, mettre en place une culture de performance durable, développer leur intelligence émotionnelle au service du leadership.",
+      "duree": "3 jours",
+      "publicCible": "Managers, cadres et responsables d'équipe",
+      "objectifs": [
+        "Développer son style de leadership",
+        "Améliorer la communication en équipe",
+        "Gérer les conflits de manière constructive",
+        "Motiver et fidéliser les collaborateurs"
+      ],
+      "afficherAccueil": true,
+      "ordre": 1
+    },
+    {
+      "id": "intra-002",
+      "nom": "Communication Professionnelle",
+      "slug": "communication-professionnelle-intra",
+      "logo": "",
+      "imageVitrine": "",
+      "galerie": [],
+      "description": "Maîtrisez les techniques de communication orale et écrite en milieu professionnel.",
+      "descriptionLongue": "Cette formation vise à améliorer les compétences communication des professionnels dans tous les contextes professionnels. Les participants apprendront à structurer leurs messages, à adapter leur discours à différents interlocuteurs et à utiliser les outils de communication moderne avec efficacité.",
+      "duree": "2 jours",
+      "publicCible": "Tous les professionnels",
+      "objectifs": [
+        "Structurer un message clair et percutant",
+        "Adapter sa communication à son audience",
+        "Maîtriser la communication non verbale",
+        "Rédiger des emails et comptes-rendus efficaces"
+      ],
+      "afficherAccueil": false,
+      "ordre": 2
+    },
+    {
+      "id": "intra-003",
+      "nom": "Gestion du Temps et Productivité",
+      "slug": "gestion-temps-productivite-intra",
+      "logo": "",
+      "imageVitrine": "",
+      "galerie": [],
+      "description": "Optimisez votre gestion du temps et boosting votre productivité au quotidien.",
+      "descriptionLongue": "Apprenez à prioriser vos tâches, à éliminer les sources de distraction et à mettre en place des méthodes de travail efficaces. Cette formation pratique vous donnera les outils concrets pour gagner en productivité et en sérénité professionnelle.",
+      "duree": "1 jour",
+      "publicCible": "Tous les professionnels",
+      "objectifs": [
+        "Hiérarchiser ses priorités",
+        "Planifier ses activités efficacement",
+        "Réduire les interruptions et distractions",
+        "Atteindre ses objectifs dans les délais"
+      ],
+      "afficherAccueil": true,
+      "ordre": 3
+    }
+  ],
+  "extra": [
+    {
+      "id": "extra-001",
+      "nom": "Initiation à la bureautique",
+      "slug": "initiation-bureautique",
+      "logo": "",
+      "imageVitrine": "",
+      "galerie": [],
+      "description": "Apprenez les bases de Word, Excel et PowerPoint pour un usage professionnel.",
+      "descriptionLongue": "Cette formation est idéale pour les personnes souhaitant acquérir les bases de la bureautique. Vous apprendrez à créer des documents Word structurés, à manipuler des tableaux Excel avec formules et graphiques, et à concevoir des présentations PowerPoint impactantes.",
+      "duree": "3 jours",
+      "publicCible": "Débutants en bureautique",
+      "objectifs": [
+        "Maîtriser les fonctionnalités essentielles de Word",
+        "Créer et formater des tableaux Excel",
+        "Concevoir des présentations PowerPoint professionnelles",
+        "Utiliser les raccourcis clavier pour gagner du temps"
+      ],
+      "afficherAccueil": true,
+      "ordre": 1
+    },
+    {
+      "id": "extra-002",
+      "nom": "Développement Web Fundamentals",
+      "slug": "dev-web-fundamentals",
+      "logo": "",
+      "imageVitrine": "",
+      "galerie": [],
+      "description": "Les fondamentaux du développement web : HTML, CSS et JavaScript.",
+      "descriptionLongue": "Plongez dans le monde du développement web avec cette formation complète. Vous apprendrez à créer des sites web responsive en maîtrisant HTML5, CSS3 et JavaScript. À l'issue de cette formation, vous serez capable de concevoir et déployer un site web professionnel.",
+      "duree": "5 jours",
+      "publicCible": "Débutants en développement web",
+      "objectifs": [
+        "Structurer une page web avec HTML5",
+        "Styler un site avec CSS3 et Flexbox/Grid",
+        "Ajouter de l'interactivité avec JavaScript",
+        "Créer un site web responsive de A à Z"
+      ],
+      "afficherAccueil": true,
+      "ordre": 2
+    },
+    {
+      "id": "extra-003",
+      "nom": "Marketing Digital et Réseaux Sociaux",
+      "slug": "marketing-digital",
+      "logo": "",
+      "imageVitrine": "",
+      "galerie": [],
+      "description": "Maîtrisez les strategies du marketing digital et la gestion des réseaux sociaux.",
+      "descriptionLongue": "Cette formation couvre les essentiels du marketing digital : SEO, SEA, gestion des réseaux sociaux, création de contenu et analyse de performance. Apprenez à élaborer une stratégie digitale efficace pour booster la visibilité de votre entreprise.",
+      "duree": "3 jours",
+      "publicCible": "Entrepreneurs, responsables marketing",
+      "objectifs": [
+        "Élaborer une stratégie de marketing digital",
+        "Optimiser le référencement naturel (SEO)",
+        "Gérer efficacement les réseaux sociaux",
+        "Analyser les indicateurs de performance"
+      ],
+      "afficherAccueil": false,
+      "ordre": 3
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "nom": "LMC Formation Conseil Étude",
+  "slogan": "Formation, Conseil et Étude pour votre réussite professionnelle",
+  "description": "LMC Formation Conseil Étude est un centre de formation professionnelle dédié à l'accompagnement des entreprises et des particuliers dans leur développement. Nous proposons des formations sur mesure, du conseil stratégique et des études approfondies pour répondre aux besoins évolutifs du marché.",
+  "contact": {
+    "adresse": "Tunis, Tunisie",
+    "telephone": "+216 71 000 000",
+    "email": "contact@lmc-formation.tn",
+    "horaires": "Lun-Ven : 8h00 - 17h00"
+  },
+  "reseauxSociaux": {
+    "facebook": "https://facebook.com/lmcformation",
+    "linkedin": "https://linkedin.com/company/lmcformation",
+    "instagram": "https://instagram.com/lmcformation"
+  },
+  "stats": [
+    { "nombre": "500+", "label": "Formés" },
+    { "nombre": "50+", "label": "Formations" },
+    { "nombre": "98%", "label": "Satisfaction" },
+    { "nombre": "10+", "label": "Années d'expérience" }
+  ],
+  "temoignages": [
+    {
+      "id": 1,
+      "nom": "Ahmed Ben Salah",
+      "poste": "Directeur RH",
+      "entreprise": "TechCorp Tunisia",
+      "texte": "Les formations de LMC ont transformé notre approche du management. L'équipe est professionnelle et à l'écoute de nos besoins.",
+      "photo": ""
+    },
+    {
+      "id": 2,
+      "nom": "Fatma Trabelsi",
+      "poste": "CEO",
+      "entreprise": "Startup Innovante",
+      "texte": "Grâce à la formation en marketing digital, nous avons doublé notre présence en ligne en seulement 3 mois.",
+      "photo": ""
+    },
+    {
+      "id": 3,
+      "nom": "Mohamed Karim",
+      "poste": "Responsable Formation",
+      "entreprise": "Groupe Industriel",
+      "texte": "Un partenaire de confiance pour toutes nos besoins en formation professionnelle. Je recommande vivement LMC.",
+      "photo": ""
+    }
+  ]
+}

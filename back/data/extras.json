@@ -1,0 +1,35 @@
+[
+  {
+    "id_extra": 1,
+    "titre": "Audit Comptable",
+    "description": [
+      "Accompagnement complet en comptabilité et fiscalité.",
+      "Bilan & Déclarations",
+      "Conseil fiscal"
+    ],
+    "prix": "Sur Devis",
+    "icone": "1783284495064.png"
+  },
+  {
+    "id_extra": 2,
+    "titre": "Secrétariat Administratif",
+    "description": [
+      "Gestion administrative et RH efficace pour vos courriers.",
+      "Gestion administrative",
+      "Scan & Email courrier"
+    ],
+    "prix": "15 DT/mois",
+    "icone": "📋"
+  },
+  {
+    "id_extra": 3,
+    "titre": "Salle de Réunion",
+    "description": [
+      "Un espace professionnel équipé pour vos réunions.",
+      "Écran & WiFi Fibre",
+      "Café inclus"
+    ],
+    "prix": "29 DT/mois",
+    "icone": "🎯"
+  }
+]

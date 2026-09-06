@@ -1,0 +1,16 @@
+{
+  "name": "domiciliation-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo pour GOOD START DOMICILIATION + LMC Formation",
+  "scripts": {
+    "dev:back": "cd back && npm run dev",
+    "dev:front": "cd front && npm run dev",
+    "dev:lmc": "cd front-lmc && npm run dev",
+    "build:front": "cd front && npm run build",
+    "build:lmc": "cd front-lmc && npm run build",
+    "build:all": "npm run build:front && npm run build:lmc",
+    "deploy": "npm run build:all && pm2 restart domiciliation-api",
+    "deploy:full": "npm run build:all && cd /etc/nginx/sites-enabled && sudo ln -sf /var/www/domiciliation/nginx/domiciliation.conf && sudo nginx -t && sudo systemctl reload nginx && pm2 restart domiciliation-api"
+  }
+}

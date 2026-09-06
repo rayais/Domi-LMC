@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #FFFFFF;
+  color: #4A4A4A;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark body,
+body.dark {
+  background-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+@layer components {
+  .section-inner {
+    @apply max-w-[1200px] mx-auto px-4;
+  }
+
+  .section-title {
+    @apply font-serif text-2xl md:text-3xl font-bold text-secondary dark:text-white text-center mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-base md:text-lg text-text-light dark:text-gray-400 text-center mb-12;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium text-base cursor-pointer transition-all duration-300 border no-underline;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white border-primary hover:bg-primary-dark hover:-translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply bg-transparent text-primary border-2 border-primary hover:bg-primary hover:text-white;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 border border-border rounded-lg text-base bg-white text-secondary dark:bg-[#2A2A2A] dark:text-white dark:border-gray-600 transition-colors;
+  }
+
+  .form-input:focus {
+    @apply outline-none border-primary;
+  }
+
+  .form-textarea {
+    @apply resize-y min-h-[120px];
+  }
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.5rem;
+  }
+  .section-subtitle {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+}
