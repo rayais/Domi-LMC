@@ -6,3 +6,5 @@ back/uploads/*
 *.log
 .DS_Store
 Thumbs.db
+pdf_pages/
+lmc doc.pdf
