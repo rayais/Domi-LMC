@@ -1,17 +1,18 @@
 {
   "nom": "LMC Formation Conseil Étude",
-  "slogan": "Formation, Conseil et Étude pour votre réussite professionnelle",
-  "description": "LMC Formation Conseil Étude est un centre de formation professionnelle dédié à l'accompagnement des entreprises et des particuliers dans leur développement. Nous proposons des formations sur mesure, du conseil stratégique et des études approfondies pour répondre aux besoins évolutifs du marché.",
+  "slogan": "Leader Management et Compétences",
+  "description": "LMC est un cabinet de formation agréé par l'Etat, doté des meilleurs formateurs tunisiens hautement qualifiés dans différents domaines d'intervention, vous proposant une démarche adaptée et personnalisée à votre entreprise à travers des formations et des solutions qui vous permettront de vous adapter aux nouvelles exigences du marché. LMC se différencie par son esprit de service, d'entraide et de simplicité favorisant la cohésion et une énergie propice à un savoir-être indispensable à l'atteinte des objectifs de réussite et à une précieuse intelligence émotionnelle et sociale, valeurs essentielles pour l'entreprise.",
   "contact": {
     "adresse": "Tunis, Tunisie",
-    "telephone": "+216 71 000 000",
-    "email": "contact@lmc-formation.tn",
+    "telephone": "+216 25 709 822",
+    "telephone2": "+216 25 762 937",
+    "email": "lmc.formationpro@gmail.com",
     "horaires": "Lun-Ven : 8h00 - 17h00"
   },
   "reseauxSociaux": {
-    "facebook": "https://facebook.com/lmcformation",
-    "linkedin": "https://linkedin.com/company/lmcformation",
-    "instagram": "https://instagram.com/lmcformation"
+    "facebook": "",
+    "linkedin": "",
+    "instagram": ""
   },
   "stats": [
     { "nombre": "500+", "label": "Formés" },
@@ -41,7 +42,7 @@
       "nom": "Mohamed Karim",
       "poste": "Responsable Formation",
       "entreprise": "Groupe Industriel",
-      "texte": "Un partenaire de confiance pour toutes nos besoins en formation professionnelle. Je recommande vivement LMC.",
+      "texte": "Un partenaire de confiance pour tous nos besoins en formation professionnelle. Je recommande vivement LMC.",
       "photo": ""
     }
   ]
