@@ -3,12 +3,14 @@ const { readData, writeData, getNextId } = require('../../data/helper');
 const DATA_FILE = 'lmc/formations.json';
 const ID_FIELD = 'id';
 
+const sortByOrdre = (arr) => [...arr].sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+
 const getAll = (req, res) => {
   try {
     const data = readData(DATA_FILE);
     const { type } = req.query;
-    if (type === 'intra') return res.status(200).send(data.intra || []);
-    if (type === 'extra') return res.status(200).send(data.extra || []);
+    if (type === 'intra') return res.status(200).send(sortByOrdre(data.intra || []));
+    if (type === 'extra') return res.status(200).send(sortByOrdre(data.extra || []));
     res.status(200).send(data);
   } catch (error) {
     res.status(400).send({ error: 'Erreur lors de la récupération des formations' });

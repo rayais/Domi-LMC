@@ -21,11 +21,13 @@ export default function Home() {
         type="extra"
         title="Formations Société"
         subtitle="Des programmes adaptés aux besoins de votre entreprise"
+        accueilOnly={true}
       />
       <FormationsList
         type="intra"
         title="Formations Individuelles"
         subtitle="Développez vos compétences à votre rythme"
+        accueilOnly={true}
       />
       <Testimonials temoignages={temoignages} />
       <CTA />

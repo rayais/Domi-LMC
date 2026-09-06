@@ -31,11 +31,11 @@ export default function Navbar() {
   useEffect(() => {
     fetch('/lmc/formations?type=intra')
       .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setIntraFormations(data) })
+      .then(data => { if (Array.isArray(data)) setIntraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0))) })
       .catch(() => {})
     fetch('/lmc/formations?type=extra')
       .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setExtraFormations(data) })
+      .then(data => { if (Array.isArray(data)) setExtraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0))) })
       .catch(() => {})
     getSite().then(data => {
       if (data?.nom) setSiteName(data.nom.split(' ')[0] || 'LMC')

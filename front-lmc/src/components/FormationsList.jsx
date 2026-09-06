@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Card from './Card'
 
-export default function FormationsList({ type, title, subtitle }) {
+export default function FormationsList({ type, title, subtitle, accueilOnly = false }) {
   const [formations, setFormations] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -11,12 +11,16 @@ export default function FormationsList({ type, title, subtitle }) {
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0)))
+          let list = data
+          if (accueilOnly) {
+            list = data.filter(f => f.afficherAccueil === true)
+          }
+          setFormations(list)
         }
       })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }, [type])
+  }, [type, accueilOnly])
 
   if (loading) {
     return (
