@@ -18,6 +18,7 @@ export default function FormationSociete() {
         type="extra"
         title=""
         subtitle=""
+        grouped={true}
       />
       <CTA />
     </div>

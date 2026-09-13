@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useDarkMode } from '../hooks/useDarkMode'
 import { getSite } from '../services/api'
@@ -8,6 +8,95 @@ function isLoggedIn() {
   const token = localStorage.getItem('lmc-token')
   const expiry = localStorage.getItem('lmc-tokenExpiry')
   return token && expiry && Date.now() <= Number(expiry)
+}
+
+function groupByModule(formations) {
+  const groups = {}
+  formations.forEach(f => {
+    const mod = f.module || 'Autre'
+    if (!groups[mod]) groups[mod] = []
+    groups[mod].push(f)
+  })
+  return groups
+}
+
+function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
+  const [activeModule, setActiveModule] = useState(null)
+  const groups = groupByModule(formations)
+  const moduleNames = Object.keys(groups)
+
+  return (
+    <div className="relative" onMouseLeave={() => setActiveModule(null)}>
+      <button
+        onClick={onToggle}
+        className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
+      >
+        {label}
+        <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[70vh] overflow-y-auto">
+          {moduleNames.length > 0 ? moduleNames.map(mod => (
+            <div key={mod} className="relative" onMouseEnter={() => setActiveModule(mod)}>
+              <div className="flex items-center justify-between px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 cursor-default">
+                {mod}
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              {activeModule === mod && (
+                <div className="absolute top-0 left-full ml-1 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50">
+                  {groups[mod].map(f => (
+                    <Link key={f.id} to={`/formation/${f.slug}`} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+                      {f.nom}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )) : (
+            <span className="block px-4 py-2 text-sm text-text-light">Aucune formation</span>
+          )}
+          <Link to={listPath} className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
+            Voir toutes →
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function MobileModuleList({ formations, listPath, onClose }) {
+  const groups = groupByModule(formations)
+  const [openMod, setOpenMod] = useState(null)
+
+  return (
+    <div className="flex flex-col gap-1">
+      {Object.keys(groups).map(mod => (
+        <div key={mod}>
+          <button
+            onClick={() => setOpenMod(v => v === mod ? null : mod)}
+            className="w-full text-left px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 bg-transparent border-none cursor-pointer flex items-center justify-between"
+          >
+            {mod}
+            <svg className={`w-3 h-3 transition-transform ${openMod === mod ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          {openMod === mod && groups[mod].map(f => (
+            <Link key={f.id} to={`/formation/${f.slug}`} onClick={onClose} className="block px-8 py-1.5 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+              {f.nom}
+            </Link>
+          ))}
+        </div>
+      ))}
+      <Link to={listPath} onClick={onClose} className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
+        Voir toutes →
+      </Link>
+    </div>
+  )
 }
 
 export default function Navbar() {
@@ -66,62 +155,36 @@ export default function Navbar() {
           <span className={`block w-6 h-0.5 bg-secondary dark:bg-white transition-all ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
         </button>
 
-        <div className={`md:flex md:items-center md:gap-6 ${menuOpen ? 'fixed inset-0 top-16 bg-white dark:bg-[#1A1A1A] flex flex-col items-start p-6 gap-4' : 'hidden'}`}>
+        <div className={`md:flex md:items-center md:gap-6 ${menuOpen ? 'fixed inset-0 top-16 bg-white dark:bg-[#1A1A1A] flex flex-col items-start p-6 gap-4 overflow-y-auto' : 'hidden'}`}>
           <Link to="/" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
             Accueil
           </Link>
 
-          <div className="relative">
-            <button
-              onClick={() => { setExtraOpen(v => !v); setIntraOpen(false) }}
-              className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
-            >
-              Formation Société
-              <svg className={`w-4 h-4 transition-transform ${extraOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {extraOpen && (
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50">
-                {extraFormations.length > 0 ? extraFormations.map(f => (
-                  <Link key={f.id} to={`/formation/${f.slug}`} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
-                    {f.nom}
-                  </Link>
-                )) : (
-                  <span className="block px-4 py-2 text-sm text-text-light">Aucune formation</span>
-                )}
-                <Link to="/formation-societe" className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
-                  Voir toutes →
-                </Link>
-              </div>
-            )}
-          </div>
-
-          <div className="relative">
-            <button
-              onClick={() => { setIntraOpen(v => !v); setExtraOpen(false) }}
-              className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
-            >
-              Formation Individuelle
-              <svg className={`w-4 h-4 transition-transform ${intraOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {intraOpen && (
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50">
-                {intraFormations.length > 0 ? intraFormations.map(f => (
-                  <Link key={f.id} to={`/formation/${f.slug}`} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
-                    {f.nom}
-                  </Link>
-                )) : (
-                  <span className="block px-4 py-2 text-sm text-text-light">Aucune formation</span>
-                )}
-                <Link to="/formation-individuelle" className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
-                  Voir toutes →
-                </Link>
-              </div>
-            )}
-          </div>
+          {menuOpen ? (
+            <>
+              <span className="text-sm font-bold text-primary dark:text-orange-400 mt-2">Formation Société</span>
+              <MobileModuleList formations={extraFormations} listPath="/formation-societe" onClose={() => setMenuOpen(false)} />
+              <span className="text-sm font-bold text-primary dark:text-orange-400 mt-2">Formation Individuelle</span>
+              <MobileModuleList formations={intraFormations} listPath="/formation-individuelle" onClose={() => setMenuOpen(false)} />
+            </>
+          ) : (
+            <>
+              <ModuleDropdown
+                label="Formation Société"
+                formations={extraFormations}
+                isOpen={extraOpen}
+                onToggle={() => { setExtraOpen(v => !v); setIntraOpen(false) }}
+                listPath="/formation-societe"
+              />
+              <ModuleDropdown
+                label="Formation Individuelle"
+                formations={intraFormations}
+                isOpen={intraOpen}
+                onToggle={() => { setIntraOpen(v => !v); setExtraOpen(false) }}
+                listPath="/formation-individuelle"
+              />
+            </>
+          )}
 
           <Link to="/a-propos" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
             À propos

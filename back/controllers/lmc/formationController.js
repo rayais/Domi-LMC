@@ -45,7 +45,7 @@ const getById = (req, res) => {
 
 const create = (req, res) => {
   try {
-    const { type, nom, slug, description, descriptionLongue, duree, publicCible, objectifs, ordre, afficherAccueil } = req.body;
+    const { type, nom, slug, module, description, descriptionLongue, duree, publicCible, objectifs, ordre, afficherAccueil } = req.body;
     if (!type || !nom || !slug) {
       return res.status(400).send({ error: 'Les champs type, nom et slug sont requis' });
     }
@@ -67,6 +67,7 @@ const create = (req, res) => {
       id: 'lmc-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
       nom,
       slug,
+      module: module || '',
       logo,
       imageVitrine,
       galerie,
@@ -96,9 +97,10 @@ const update = (req, res) => {
       const index = data[type].findIndex(f => f.id === id);
       if (index === -1) continue;
       found = true;
-      const { nom, slug, description, descriptionLongue, duree, publicCible, objectifs, ordre, afficherAccueil, type: newType } = req.body;
+      const { nom, slug, module, description, descriptionLongue, duree, publicCible, objectifs, ordre, afficherAccueil, type: newType } = req.body;
       if (nom !== undefined) data[type][index].nom = nom;
       if (slug !== undefined) data[type][index].slug = slug;
+      if (module !== undefined) data[type][index].module = module;
       if (description !== undefined) data[type][index].description = description;
       if (descriptionLongue !== undefined) data[type][index].descriptionLongue = descriptionLongue;
       if (duree !== undefined) data[type][index].duree = duree;

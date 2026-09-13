@@ -18,6 +18,7 @@ export default function FormationIndividuelle() {
         type="intra"
         title=""
         subtitle=""
+        grouped={true}
       />
       <CTA />
     </div>

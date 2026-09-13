@@ -71,7 +71,7 @@ export default function Admin() {
 
   const [lmcFormations, setLmcFormations] = useState({ intra: [], extra: [] })
   const [lmcEdit, setLmcEdit] = useState(null)
-  const [lmcForm, setLmcForm] = useState({ type: 'extra', nom: '', slug: '', description: '', descriptionLongue: '', duree: '', publicCible: '', objectifs: '', ordre: '1', afficherAccueil: false })
+  const [lmcForm, setLmcForm] = useState({ type: 'extra', nom: '', slug: '', module: '', description: '', descriptionLongue: '', duree: '', publicCible: '', objectifs: '', ordre: '1', afficherAccueil: false })
   const [lmcLogo, setLmcLogo] = useState(null)
   const [lmcVitrine, setLmcVitrine] = useState(null)
   const [lmcGalerie, setLmcGalerie] = useState(null)
@@ -148,7 +148,7 @@ export default function Admin() {
   }, [authenticated])
 
   function openNew() {
-    setLmcForm({ type: 'extra', nom: '', slug: '', description: '', descriptionLongue: '', duree: '', publicCible: '', objectifs: '', ordre: '1', afficherAccueil: false })
+    setLmcForm({ type: 'extra', nom: '', slug: '', module: '', description: '', descriptionLongue: '', duree: '', publicCible: '', objectifs: '', ordre: '1', afficherAccueil: false })
     setLmcLogo(null); setLmcVitrine(null); setLmcGalerie(null)
     setLmcEdit('new')
   }
@@ -157,7 +157,7 @@ export default function Admin() {
     const isExtra = (lmcFormations.extra || []).some(x => x.id === f.id)
     setLmcForm({
       type: isExtra ? 'extra' : 'intra',
-      nom: f.nom || '', slug: f.slug || '',
+      nom: f.nom || '', slug: f.slug || '', module: f.module || '',
       description: f.description || '', descriptionLongue: f.descriptionLongue || '',
       duree: f.duree || '', publicCible: f.publicCible || '',
       objectifs: Array.isArray(f.objectifs) ? f.objectifs.join('\n') : (f.objectifs || ''),
@@ -176,6 +176,7 @@ export default function Admin() {
     fd.append('type', lmcForm.type)
     fd.append('nom', lmcForm.nom)
     fd.append('slug', lmcForm.slug)
+    fd.append('module', lmcForm.module)
     fd.append('description', lmcForm.description)
     fd.append('descriptionLongue', lmcForm.descriptionLongue)
     fd.append('duree', lmcForm.duree)
@@ -483,6 +484,12 @@ export default function Admin() {
                           <input value={lmcForm.slug} onChange={e => setLmcForm({ ...lmcForm, slug: e.target.value })} required
                             className="w-full px-3 py-2 border border-border dark:border-gray-600 rounded-lg bg-bg dark:bg-[#1A1A1A] text-secondary dark:text-white" />
                         </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-secondary dark:text-gray-300 mb-1">Module</label>
+                        <input value={lmcForm.module} onChange={e => setLmcForm({ ...lmcForm, module: e.target.value })}
+                          placeholder="ex: Management de la qualité"
+                          className="w-full px-3 py-2 border border-border dark:border-gray-600 rounded-lg bg-bg dark:bg-[#1A1A1A] text-secondary dark:text-white" />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-secondary dark:text-gray-300 mb-1">Description courte</label>

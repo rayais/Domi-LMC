@@ -56,6 +56,11 @@ export default function FormationDetail() {
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
           <div className="section-inner">
             <div className="flex items-center gap-3 mb-3">
+              {formation.module && (
+                <span className="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full backdrop-blur-sm">
+                  {formation.module}
+                </span>
+              )}
               <span className="bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">
                 {formation.duree}
               </span>
