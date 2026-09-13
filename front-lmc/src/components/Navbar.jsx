@@ -19,111 +19,17 @@ function groupByModule(formations) {
   return groups
 }
 
-function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
-  const [activeModule, setActiveModule] = useState(null)
-  const groups = groupByModule(formations)
-  const moduleNames = Object.keys(groups)
-  const ref = useRef(null)
-
-  useEffect(() => {
-    if (!isOpen) { setActiveModule(null); return }
-    function handleClick(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
-        onToggle()
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [isOpen, onToggle])
-
-  return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={onToggle}
-        className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
-      >
-        {label}
-        <svg className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[70vh] overflow-y-auto">
-          {moduleNames.length > 0 ? moduleNames.map(mod => (
-            <div key={mod} className="relative">
-              <button
-                onClick={() => setActiveModule(activeModule === mod ? null : mod)}
-                className="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 cursor-pointer bg-transparent border-none transition-colors"
-              >
-                {mod}
-                <svg className={`w-3 h-3 text-text-light transition-transform ${activeModule === mod ? '-rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-              {activeModule === mod && (
-                <div className="absolute top-0 right-full mr-1 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[60vh] overflow-y-auto">
-                  <div className="px-4 py-1.5 text-xs font-bold text-primary dark:text-orange-400 uppercase tracking-wide border-b border-border dark:border-gray-600 mb-1">{mod}</div>
-                  {groups[mod].map(f => (
-                    <Link key={f.id} to={`/formation/${f.slug}`} onClick={onToggle} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
-                      {f.nom}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          )) : (
-            <span className="block px-4 py-2 text-sm text-text-light">Aucune formation</span>
-          )}
-          <Link to={listPath} onClick={onToggle} className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
-            Voir toutes →
-          </Link>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function MobileModuleList({ formations, listPath, onClose }) {
-  const groups = groupByModule(formations)
-  const [openMod, setOpenMod] = useState(null)
-
-  return (
-    <div className="flex flex-col gap-1">
-      {Object.keys(groups).map(mod => (
-        <div key={mod}>
-          <button
-            onClick={() => setOpenMod(v => v === mod ? null : mod)}
-            className="w-full text-left px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 bg-transparent border-none cursor-pointer flex items-center justify-between"
-          >
-            {mod}
-            <svg className={`w-3 h-3 transition-transform ${openMod === mod ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-          {openMod === mod && groups[mod].map(f => (
-            <Link key={f.id} to={`/formation/${f.slug}`} onClick={onClose} className="block px-8 py-1.5 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
-              {f.nom}
-            </Link>
-          ))}
-        </div>
-      ))}
-      <Link to={listPath} onClick={onClose} className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
-        Voir toutes →
-      </Link>
-    </div>
-  )
-}
-
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [intraOpen, setIntraOpen] = useState(false)
-  const [extraOpen, setExtraOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState(null)
+  const [openModule, setOpenModule] = useState(null)
   const [intraFormations, setIntraFormations] = useState([])
   const [extraFormations, setExtraFormations] = useState([])
   const [loggedIn, setLoggedIn] = useState(isLoggedIn)
   const { dark, toggle } = useDarkMode()
   const location = useLocation()
+  const ref = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -148,16 +54,87 @@ export default function Navbar() {
 
   useEffect(() => {
     setMenuOpen(false)
-    setIntraOpen(false)
-    setExtraOpen(false)
+    setOpenDropdown(null)
+    setOpenModule(null)
     setLoggedIn(isLoggedIn())
   }, [location])
 
-  const toggleExtra = () => setExtraOpen(v => !v)
-  const toggleIntra = () => setIntraOpen(v => !v)
+  useEffect(() => {
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpenDropdown(null)
+        setOpenModule(null)
+      }
+    }
+    if (openDropdown) {
+      document.addEventListener('mousedown', handleClick)
+      return () => document.removeEventListener('mousedown', handleClick)
+    }
+  }, [openDropdown])
+
+  function toggleDropdown(name) {
+    if (openDropdown === name) {
+      setOpenDropdown(null)
+      setOpenModule(null)
+    } else {
+      setOpenDropdown(name)
+      setOpenModule(null)
+    }
+  }
+
+  function toggleModule(name) {
+    setOpenModule(prev => prev === name ? null : name)
+  }
+
+  function closeAll() {
+    setOpenDropdown(null)
+    setOpenModule(null)
+    setMenuOpen(false)
+  }
+
+  const extraGroups = groupByModule(extraFormations)
+  const intraGroups = groupByModule(intraFormations)
+
+  function renderDropdown(groups, listPath, dropdownName) {
+    const moduleNames = Object.keys(groups)
+    return (
+      <div className="absolute top-full left-0 mt-2 w-80 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[70vh] overflow-y-auto">
+        {moduleNames.length > 0 ? moduleNames.map(mod => (
+          <div key={mod}>
+            <button
+              onClick={() => toggleModule(mod)}
+              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-semibold hover:bg-bg-alt dark:hover:bg-gray-700 cursor-pointer bg-transparent border-none transition-colors text-left"
+            >
+              <span className="text-secondary dark:text-gray-300">{mod}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-text-light dark:text-gray-500">{groups[mod].length}</span>
+                <svg className={`w-4 h-4 text-text-light transition-transform ${openModule === mod ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </button>
+            {openModule === mod && (
+              <div className="bg-bg-alt dark:bg-gray-700/30 pb-1">
+                {groups[mod].map(f => (
+                  <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-6 py-2 text-sm text-secondary dark:text-gray-300 hover:text-primary no-underline transition-colors">
+                    {f.nom}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )) : (
+          <span className="block px-4 py-2 text-sm text-text-light">Aucune formation</span>
+        )}
+        <Link to={listPath} onClick={closeAll} className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
+          Voir toutes les formations →
+        </Link>
+      </div>
+    )
+  }
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-[#1A1A1A]/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
+    <nav ref={ref} className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-[#1A1A1A]/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
       <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-16 md:h-20">
         <Link to="/" className="flex items-center gap-2 no-underline">
           <img src={lmcLogo} alt="LMC Formation" className="h-10 w-auto" />
@@ -174,40 +151,90 @@ export default function Navbar() {
         </button>
 
         <div className={`md:flex md:items-center md:gap-6 ${menuOpen ? 'fixed inset-0 top-16 bg-white dark:bg-[#1A1A1A] flex flex-col items-start p-6 gap-4 overflow-y-auto' : 'hidden'}`}>
-          <Link to="/" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
+          <Link to="/" onClick={closeAll} className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
             Accueil
           </Link>
 
           {menuOpen ? (
             <>
               <span className="text-sm font-bold text-primary dark:text-orange-400 mt-2">Formation Société</span>
-              <MobileModuleList formations={extraFormations} listPath="/formation-societe" onClose={() => setMenuOpen(false)} />
+              <div className="flex flex-col gap-1 w-full">
+                {Object.keys(extraGroups).map(mod => (
+                  <div key={mod}>
+                    <button
+                      onClick={() => toggleModule(mod)}
+                      className="w-full text-left px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 bg-transparent border-none cursor-pointer flex items-center justify-between"
+                    >
+                      {mod}
+                      <svg className={`w-3 h-3 transition-transform ${openModule === mod ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    {openModule === mod && extraGroups[mod].map(f => (
+                      <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-8 py-1.5 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+                        {f.nom}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+
               <span className="text-sm font-bold text-primary dark:text-orange-400 mt-2">Formation Individuelle</span>
-              <MobileModuleList formations={intraFormations} listPath="/formation-individuelle" onClose={() => setMenuOpen(false)} />
+              <div className="flex flex-col gap-1 w-full">
+                {Object.keys(intraGroups).map(mod => (
+                  <div key={mod}>
+                    <button
+                      onClick={() => toggleModule(mod)}
+                      className="w-full text-left px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 bg-transparent border-none cursor-pointer flex items-center justify-between"
+                    >
+                      {mod}
+                      <svg className={`w-3 h-3 transition-transform ${openModule === mod ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    {openModule === mod && intraGroups[mod].map(f => (
+                      <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-8 py-1.5 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+                        {f.nom}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </>
           ) : (
             <>
-              <ModuleDropdown
-                label="Formation Société"
-                formations={extraFormations}
-                isOpen={extraOpen}
-                onToggle={toggleExtra}
-                listPath="/formation-societe"
-              />
-              <ModuleDropdown
-                label="Formation Individuelle"
-                formations={intraFormations}
-                isOpen={intraOpen}
-                onToggle={toggleIntra}
-                listPath="/formation-individuelle"
-              />
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('extra')}
+                  className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
+                >
+                  Formation Société
+                  <svg className={`w-4 h-4 transition-transform ${openDropdown === 'extra' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {openDropdown === 'extra' && renderDropdown(extraGroups, '/formation-societe', 'extra')}
+              </div>
+
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('intra')}
+                  className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
+                >
+                  Formation Individuelle
+                  <svg className={`w-4 h-4 transition-transform ${openDropdown === 'intra' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {openDropdown === 'intra' && renderDropdown(intraGroups, '/formation-individuelle', 'intra')}
+              </div>
             </>
           )}
 
-          <Link to="/a-propos" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
+          <Link to="/a-propos" onClick={closeAll} className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
             À propos
           </Link>
-          <Link to="/contact" className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
+          <Link to="/contact" onClick={closeAll} className="text-secondary dark:text-gray-300 hover:text-primary no-underline font-medium transition-colors">
             Contact
           </Link>
           {loggedIn && (
