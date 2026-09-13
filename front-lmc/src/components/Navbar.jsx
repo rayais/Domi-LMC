@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { getSite } from '../services/api'
 import lmcLogo from '../assets/lmc.png'
 
 function isLoggedIn() {
@@ -35,7 +34,7 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
-  }, [isOpen])
+  }, [isOpen, onToggle])
 
   return (
     <div className="relative" ref={ref}>
@@ -53,7 +52,7 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
           {moduleNames.length > 0 ? moduleNames.map(mod => (
             <div key={mod} className="relative">
               <button
-                onClick={(e) => { e.stopPropagation(); setActiveModule(activeModule === mod ? null : mod) }}
+                onClick={() => setActiveModule(activeModule === mod ? null : mod)}
                 className="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 cursor-pointer bg-transparent border-none transition-colors"
               >
                 {mod}
@@ -65,7 +64,7 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
                 <div className="absolute top-0 right-full mr-1 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[60vh] overflow-y-auto">
                   <div className="px-4 py-1.5 text-xs font-bold text-primary dark:text-orange-400 uppercase tracking-wide border-b border-border dark:border-gray-600 mb-1">{mod}</div>
                   {groups[mod].map(f => (
-                    <Link key={f.id} to={`/formation/${f.slug}`} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+                    <Link key={f.id} to={`/formation/${f.slug}`} onClick={onToggle} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
                       {f.nom}
                     </Link>
                   ))}
@@ -75,7 +74,7 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
           )) : (
             <span className="block px-4 py-2 text-sm text-text-light">Aucune formation</span>
           )}
-          <Link to={listPath} className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
+          <Link to={listPath} onClick={onToggle} className="block px-4 py-2 text-sm text-primary font-medium border-t border-border dark:border-gray-600 mt-1 pt-2 no-underline">
             Voir toutes →
           </Link>
         </div>
@@ -135,11 +134,15 @@ export default function Navbar() {
   useEffect(() => {
     fetch('/lmc/formations?type=intra')
       .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setIntraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0))) })
+      .then(data => {
+        if (Array.isArray(data)) setIntraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0)))
+      })
       .catch(() => {})
     fetch('/lmc/formations?type=extra')
       .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setExtraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0))) })
+      .then(data => {
+        if (Array.isArray(data)) setExtraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0)))
+      })
       .catch(() => {})
   }, [])
 
@@ -149,6 +152,9 @@ export default function Navbar() {
     setExtraOpen(false)
     setLoggedIn(isLoggedIn())
   }, [location])
+
+  const toggleExtra = () => setExtraOpen(v => !v)
+  const toggleIntra = () => setIntraOpen(v => !v)
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-[#1A1A1A]/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
@@ -185,14 +191,14 @@ export default function Navbar() {
                 label="Formation Société"
                 formations={extraFormations}
                 isOpen={extraOpen}
-                onToggle={() => { setExtraOpen(v => !v); setIntraOpen(false) }}
+                onToggle={toggleExtra}
                 listPath="/formation-societe"
               />
               <ModuleDropdown
                 label="Formation Individuelle"
                 formations={intraFormations}
                 isOpen={intraOpen}
-                onToggle={() => { setIntraOpen(v => !v); setExtraOpen(false) }}
+                onToggle={toggleIntra}
                 listPath="/formation-individuelle"
               />
             </>
