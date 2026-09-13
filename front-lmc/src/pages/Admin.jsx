@@ -422,7 +422,7 @@ export default function Admin() {
                       <th className="text-left px-4 py-3 font-medium text-secondary dark:text-gray-300">Type</th>
                       <th className="text-left px-4 py-3 font-medium text-secondary dark:text-gray-300">Nom</th>
                       <th className="text-left px-4 py-3 font-medium text-secondary dark:text-gray-300">Slug</th>
-                      <th className="text-left px-4 py-3 font-medium text-secondary dark:text-gray-300">Durée</th>
+                      <th className="text-left px-4 py-3 font-medium text-secondary dark:text-gray-300">Module</th>
                       <th className="text-left px-4 py-3 font-medium text-secondary dark:text-gray-300">Accueil</th>
                       <th className="text-right px-4 py-3 font-medium text-secondary dark:text-gray-300">Actions</th>
                     </tr>
@@ -442,7 +442,7 @@ export default function Admin() {
                           </td>
                           <td className="px-4 py-3 font-medium text-secondary dark:text-white">{f.nom}</td>
                           <td className="px-4 py-3 text-text-light dark:text-gray-400 text-xs">{f.slug}</td>
-                          <td className="px-4 py-3 text-text-light dark:text-gray-400">{f.duree}</td>
+                          <td className="px-4 py-3 text-text-light dark:text-gray-400">{f.module || '—'}</td>
                           <td className="px-4 py-3 text-text-light dark:text-gray-400">{f.afficherAccueil ? '✓' : '—'}</td>
                           <td className="px-4 py-3 text-right">
                             <button onClick={() => openEdit(f)} className="text-primary hover:text-primary-dark text-sm font-medium mr-3">Modifier</button>

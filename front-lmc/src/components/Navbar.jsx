@@ -37,22 +37,23 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
         </svg>
       </button>
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[70vh] overflow-y-auto">
+        <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[70vh] overflow-y-auto">
           {moduleNames.length > 0 ? moduleNames.map(mod => (
-            <div key={mod} className="relative">
+            <div key={mod} className="relative" onMouseEnter={() => setActiveModule(mod)} onMouseLeave={() => setActiveModule(null)}>
               <button
                 onClick={() => setActiveModule(activeModule === mod ? null : mod)}
-                className="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 cursor-pointer bg-transparent border-none hover:bg-bg-alt dark:hover:bg-gray-700 transition-colors"
+                className="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 cursor-pointer bg-transparent border-none transition-colors"
               >
                 {mod}
-                <svg className={`w-3 h-3 transition-transform ${activeModule === mod ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
               {activeModule === mod && (
-                <div className="w-full bg-bg-alt dark:bg-gray-700/50 py-1">
+                <div className="absolute top-0 right-full mr-1 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[60vh] overflow-y-auto">
+                  <div className="px-4 py-1.5 text-xs font-bold text-primary dark:text-orange-400 uppercase tracking-wide border-b border-border dark:border-gray-600 mb-1">{mod}</div>
                   {groups[mod].map(f => (
-                    <Link key={f.id} to={`/formation/${f.slug}`} className="block px-6 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-border dark:hover:bg-gray-600 no-underline transition-colors">
+                    <Link key={f.id} to={`/formation/${f.slug}`} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
                       {f.nom}
                     </Link>
                   ))}
