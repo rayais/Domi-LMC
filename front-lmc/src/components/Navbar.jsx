@@ -24,9 +24,21 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
   const [activeModule, setActiveModule] = useState(null)
   const groups = groupByModule(formations)
   const moduleNames = Object.keys(groups)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (!isOpen) { setActiveModule(null); return }
+    function handleClick(e) {
+      if (ref.current && !ref.current.contains(e.target)) {
+        onToggle()
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [isOpen])
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <button
         onClick={onToggle}
         className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
@@ -39,13 +51,13 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[70vh] overflow-y-auto">
           {moduleNames.length > 0 ? moduleNames.map(mod => (
-            <div key={mod} className="relative" onMouseEnter={() => setActiveModule(mod)} onMouseLeave={() => setActiveModule(null)}>
+            <div key={mod} className="relative">
               <button
-                onClick={() => setActiveModule(activeModule === mod ? null : mod)}
+                onClick={(e) => { e.stopPropagation(); setActiveModule(activeModule === mod ? null : mod) }}
                 className="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 cursor-pointer bg-transparent border-none transition-colors"
               >
                 {mod}
-                <svg className="w-3 h-3 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-3 h-3 text-text-light transition-transform ${activeModule === mod ? '-rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
@@ -110,7 +122,6 @@ export default function Navbar() {
   const [extraOpen, setExtraOpen] = useState(false)
   const [intraFormations, setIntraFormations] = useState([])
   const [extraFormations, setExtraFormations] = useState([])
-  const [siteName, setSiteName] = useState('LMC')
   const [loggedIn, setLoggedIn] = useState(isLoggedIn)
   const { dark, toggle } = useDarkMode()
   const location = useLocation()
@@ -130,9 +141,6 @@ export default function Navbar() {
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setExtraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0))) })
       .catch(() => {})
-    getSite().then(data => {
-      if (data?.nom) setSiteName(data.nom.split(' ')[0] || 'LMC')
-    }).catch(() => {})
   }, [])
 
   useEffect(() => {
