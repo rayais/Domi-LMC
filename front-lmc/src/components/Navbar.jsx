@@ -105,18 +105,15 @@ export default function Navbar() {
               onClick={() => toggleModule(mod)}
               className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-semibold hover:bg-bg-alt dark:hover:bg-gray-700 cursor-pointer bg-transparent border-none transition-colors text-left"
             >
-              <span className="text-secondary dark:text-gray-300">{mod}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-text-light dark:text-gray-500">{groups[mod].length}</span>
-                <svg className={`w-4 h-4 text-text-light transition-transform ${openModule === mod ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+              <span className="text-primary dark:text-orange-400">{mod}</span>
+              <svg className={`w-4 h-4 text-primary dark:text-orange-400 transition-transform ${openModule === mod ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
             {openModule === mod && (
               <div className="bg-bg-alt dark:bg-gray-700/30 pb-1">
                 {groups[mod].map(f => (
-                  <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-6 py-2 text-sm text-secondary dark:text-gray-300 hover:text-primary no-underline transition-colors">
+                  <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-6 py-1.5 text-xs italic font-serif text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-orange-400 no-underline transition-colors">
                     {f.nom}
                   </Link>
                 ))}
@@ -171,7 +168,7 @@ export default function Navbar() {
                       </svg>
                     </button>
                     {openModule === mod && extraGroups[mod].map(f => (
-                      <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-8 py-1.5 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+                      <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-8 py-1.5 text-xs italic font-serif text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-orange-400 no-underline transition-colors">
                         {f.nom}
                       </Link>
                     ))}
@@ -193,7 +190,7 @@ export default function Navbar() {
                       </svg>
                     </button>
                     {openModule === mod && intraGroups[mod].map(f => (
-                      <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-8 py-1.5 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+                      <Link key={f.id} to={`/formation/${f.slug}`} onClick={closeAll} className="block px-8 py-1.5 text-xs italic font-serif text-secondary dark:text-gray-400 hover:text-primary dark:hover:text-orange-400 no-underline transition-colors">
                         {f.nom}
                       </Link>
                     ))}
