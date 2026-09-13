@@ -26,7 +26,7 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
   const moduleNames = Object.keys(groups)
 
   return (
-    <div className="relative" onMouseLeave={() => setActiveModule(null)}>
+    <div className="relative">
       <button
         onClick={onToggle}
         className="text-secondary dark:text-gray-300 hover:text-primary font-medium transition-colors flex items-center gap-1 bg-transparent border-none cursor-pointer"
@@ -39,17 +39,20 @@ function ModuleDropdown({ label, formations, isOpen, onToggle, listPath }) {
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50 max-h-[70vh] overflow-y-auto">
           {moduleNames.length > 0 ? moduleNames.map(mod => (
-            <div key={mod} className="relative" onMouseEnter={() => setActiveModule(mod)}>
-              <div className="flex items-center justify-between px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 cursor-default">
+            <div key={mod} className="relative">
+              <button
+                onClick={() => setActiveModule(activeModule === mod ? null : mod)}
+                className="w-full flex items-center justify-between px-4 py-2 text-sm font-semibold text-primary dark:text-orange-400 cursor-pointer bg-transparent border-none hover:bg-bg-alt dark:hover:bg-gray-700 transition-colors"
+              >
                 {mod}
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-3 h-3 transition-transform ${activeModule === mod ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </div>
+              </button>
               {activeModule === mod && (
-                <div className="absolute top-0 left-full ml-1 w-72 bg-white dark:bg-[#2A2A2A] rounded-lg shadow-lg border border-border dark:border-gray-600 py-2 z-50">
+                <div className="w-full bg-bg-alt dark:bg-gray-700/50 py-1">
                   {groups[mod].map(f => (
-                    <Link key={f.id} to={`/formation/${f.slug}`} className="block px-4 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-bg-alt dark:hover:bg-gray-700 no-underline transition-colors">
+                    <Link key={f.id} to={`/formation/${f.slug}`} className="block px-6 py-2 text-sm text-secondary dark:text-gray-300 hover:bg-border dark:hover:bg-gray-600 no-underline transition-colors">
                       {f.nom}
                     </Link>
                   ))}
