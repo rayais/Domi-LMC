@@ -59,11 +59,14 @@ export function getContact() {
   return request('/contact')
 }
 
-export function updateContact(data, token) {
-  return request('/contact', {
+export function updateContact(formData, token) {
+  return fetch('/contact', {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(data),
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  }).then(r => r.json()).then(d => {
+    if (d.error) throw new Error(d.error)
+    return d
   })
 }
 

@@ -73,6 +73,7 @@ export default function Admin() {
   const [lmcEdit, setLmcEdit] = useState(null)
   const [lmcForm, setLmcForm] = useState({ type: 'extra', nom: '', slug: '', module: '', description: '', descriptionLongue: '', duree: '', publicCible: '', objectifs: '', ordre: '1', afficherAccueil: false })
   const [siteLogo, setSiteLogo] = useState(lmcLogoFallback)
+  const [siteLogoFile, setSiteLogoFile] = useState(null)
   const [lmcLogo, setLmcLogo] = useState(null)
   const [lmcVitrine, setLmcVitrine] = useState(null)
   const [lmcGalerie, setLmcGalerie] = useState(null)
@@ -238,7 +239,16 @@ export default function Admin() {
     const token = getToken()
     if (!token) { setAuthenticated(false); return }
     try {
-      await updateLmcSite(lmcSite, token)
+      const fd = new FormData()
+      fd.append('nom', lmcSite.nom)
+      fd.append('slogan', lmcSite.slogan)
+      fd.append('description', lmcSite.description)
+      fd.append('contact', JSON.stringify(lmcSite.contact))
+      fd.append('reseauxSociaux', JSON.stringify(lmcSite.reseauxSociaux))
+      fd.append('stats', JSON.stringify(lmcSite.stats))
+      fd.append('temoignages', JSON.stringify(lmcSite.temoignages))
+      if (siteLogoFile) fd.append('logo', siteLogoFile)
+      await updateLmcSite(fd, token)
       setLmcSiteMsg('Mis à jour ✓')
       setTimeout(() => setLmcSiteMsg(''), 3000)
     } catch (err) { setLmcSiteMsg(err.message || 'Erreur') }
@@ -623,6 +633,19 @@ export default function Admin() {
                   <textarea value={lmcSite.description} onChange={e => setLmcSite({ ...lmcSite, description: e.target.value })} rows="3"
                     className="w-full px-3 py-2 border border-border dark:border-gray-600 rounded-lg bg-bg dark:bg-[#1A1A1A] text-secondary dark:text-white resize-y" />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-secondary dark:text-gray-300 mb-1">Logo du site</label>
+                  <div className="flex items-center gap-4">
+                    <img src={siteLogo} alt="Logo" className="h-12 w-auto rounded border border-border dark:border-gray-600" />
+                    <label className="cursor-pointer bg-bg-alt dark:bg-gray-700 px-3 py-1.5 rounded-lg text-sm text-secondary dark:text-gray-300 hover:bg-border dark:hover:bg-gray-600 transition-colors">
+                      Changer le logo
+                      <input type="file" accept="image/*" className="hidden" onChange={e => {
+                        const file = e.target.files?.[0]
+                        if (file) { setSiteLogoFile(file); setSiteLogo(URL.createObjectURL(file)) }
+                      }} />
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -728,6 +751,40 @@ export default function Admin() {
                     </div>
                     <textarea value={t.texte} onChange={e => { const temoignages = [...lmcSite.temoignages]; temoignages[i] = { ...temoignages[i], texte: e.target.value }; setLmcSite({ ...lmcSite, temoignages }) }} placeholder="Texte du témoignage" rows="2"
                       className="w-full px-3 py-2 border border-border dark:border-gray-600 rounded-lg bg-bg dark:bg-[#1A1A1A] text-secondary dark:text-white text-sm resize-y" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-bg-alt dark:bg-gray-700 flex items-center justify-center border border-border dark:border-gray-600">
+                        {t.photo ? (
+                          <img src={t.photo} alt={t.nom} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-primary font-bold text-sm">{t.nom ? t.nom.charAt(0) : '?'}</span>
+                        )}
+                      </div>
+                      <label className="cursor-pointer text-xs text-primary hover:text-primary-dark font-medium">
+                        Photo
+                        <input type="file" accept="image/*" className="hidden" onChange={e => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            const fd = new FormData()
+                            fd.append('logo', file)
+                            fetch('/lmc/hero-slides/upload', { method: 'POST', headers: { Authorization: `Bearer ${getToken()}` }, body: fd })
+                              .then(r => r.json()).then(d => {
+                                if (d.image) {
+                                  const temoignages = [...lmcSite.temoignages]
+                                  temoignages[i] = { ...temoignages[i], photo: d.image }
+                                  setLmcSite({ ...lmcSite, temoignages })
+                                }
+                              }).catch(() => {})
+                          }
+                        }} />
+                      </label>
+                      {t.photo && (
+                        <button onClick={() => {
+                          const temoignages = [...lmcSite.temoignages]
+                          temoignages[i] = { ...temoignages[i], photo: '' }
+                          setLmcSite({ ...lmcSite, temoignages })
+                        }} className="text-red-500 hover:text-red-700 text-xs">Retirer</button>
+                      )}
+                    </div>
                   </div>
                 ))}
                 {lmcSite.temoignages.length === 0 && <p className="text-text-light dark:text-gray-500 text-sm">Aucun témoignage</p>}

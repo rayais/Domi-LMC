@@ -1,7 +1,18 @@
 const { readData, writeData, getNextId } = require('../data/helper');
+const fs = require('fs');
+const path = require('path');
 
 const DATA_FILE = 'extras.json';
 const ID_FIELD = 'id_extra';
+
+function deleteFile(filename) {
+  try {
+    if (filename && !filename.startsWith('/') && !filename.match(/^[\u{1F300}-\u{1F9FF}]/u)) {
+      const fullPath = path.join(__dirname, '../uploads', filename);
+      if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+    }
+  } catch {}
+}
 
 const getall = async (req, res) => {
   try {
@@ -46,6 +57,7 @@ const supprimer = async (req, res) => {
     if (index === -1) {
       return res.status(404).send({ error: "Extra non trouvé" });
     }
+    if (data[index].icone) deleteFile(data[index].icone);
     data.splice(index, 1);
     writeData(DATA_FILE, data);
     res.status(200).send({ msg: "Extra supprimé avec succès" });
@@ -87,8 +99,10 @@ const updateExtra = async (req, res) => {
       data[index].description = description;
     }
     if (prix !== undefined) data[index].prix = prix;
-    if (req.file) data[index].icone = req.file.filename;
-    else if (icone !== undefined) data[index].icone = icone;
+    if (req.file) {
+      if (data[index].icone) deleteFile(data[index].icone);
+      data[index].icone = req.file.filename;
+    } else if (icone !== undefined) data[index].icone = icone;
     writeData(DATA_FILE, data);
     res.status(200).send({ msg: "Extra modifié avec succès" });
   } catch (error) {

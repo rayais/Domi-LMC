@@ -18,8 +18,14 @@ export default function Testimonials({ temoignages = [] }) {
               </div>
               <p className="text-text-light dark:text-gray-400 text-sm mb-4 italic">"{t.texte}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                  <span className="text-primary font-bold text-sm">{t.nom.charAt(0)}</span>
+                <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
+                  {t.photo ? (
+                    <img src={t.photo} alt={t.nom} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-primary/20 flex items-center justify-center">
+                      <span className="text-primary font-bold text-sm">{t.nom.charAt(0)}</span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <div className="font-medium text-secondary dark:text-white text-sm">{t.nom}</div>

@@ -19,6 +19,7 @@ const heroSlidesLmcRouter = require("./routes/lmc/heroSlidesRoute");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(
   helmet.contentSecurityPolicy({

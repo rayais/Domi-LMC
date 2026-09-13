@@ -99,14 +99,14 @@ export function getSite() {
   return request('/')
 }
 
-export function updateSite(data, token) {
-  return request('/', {
+export function updateSite(formData, token) {
+  return fetch(API + '/', {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  }).then(r => r.json()).then(d => {
+    if (d.error) throw new Error(d.error)
+    return d
   })
 }
 

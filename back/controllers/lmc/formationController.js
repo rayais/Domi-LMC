@@ -1,7 +1,27 @@
 const { readData, writeData, getNextId } = require('../../data/helper');
+const fs = require('fs');
+const path = require('path');
 
 const DATA_FILE = 'lmc/formations.json';
 const ID_FIELD = 'id';
+
+function deleteFile(filePath) {
+  try {
+    if (filePath && filePath.startsWith('/uploads/')) {
+      const fullPath = path.join(__dirname, '..', '..', filePath);
+      if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+    }
+  } catch {}
+}
+
+function deleteFormationImages(formation) {
+  if (!formation) return;
+  deleteFile(formation.logo);
+  deleteFile(formation.imageVitrine);
+  if (Array.isArray(formation.galerie)) {
+    formation.galerie.forEach(img => deleteFile(img));
+  }
+}
 
 const sortByOrdre = (arr) => [...arr].sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
 
@@ -111,9 +131,20 @@ const update = (req, res) => {
       if (ordre !== undefined) data[type][index].ordre = parseInt(ordre);
       if (afficherAccueil !== undefined) data[type][index].afficherAccueil = afficherAccueil === 'true' || afficherAccueil === true;
       if (req.files) {
-        if (req.files.logo && req.files.logo[0]) data[type][index].logo = '/uploads/lmc/' + req.files.logo[0].filename;
-        if (req.files.imageVitrine && req.files.imageVitrine[0]) data[type][index].imageVitrine = '/uploads/lmc/' + req.files.imageVitrine[0].filename;
-        if (req.files.galerie) data[type][index].galerie = req.files.galerie.map(f => '/uploads/lmc/' + f.filename);
+        if (req.files.logo && req.files.logo[0]) {
+          deleteFile(data[type][index].logo);
+          data[type][index].logo = '/uploads/lmc/' + req.files.logo[0].filename;
+        }
+        if (req.files.imageVitrine && req.files.imageVitrine[0]) {
+          deleteFile(data[type][index].imageVitrine);
+          data[type][index].imageVitrine = '/uploads/lmc/' + req.files.imageVitrine[0].filename;
+        }
+        if (req.files.galerie) {
+          if (Array.isArray(data[type][index].galerie)) {
+            data[type][index].galerie.forEach(img => deleteFile(img));
+          }
+          data[type][index].galerie = req.files.galerie.map(f => '/uploads/lmc/' + f.filename);
+        }
       }
       if (newType && newType !== type && (newType === 'intra' || newType === 'extra')) {
         const formation = data[type].splice(index, 1)[0];
@@ -139,6 +170,7 @@ const remove = (req, res) => {
       if (!data[type]) continue;
       const index = data[type].findIndex(f => f.id === id);
       if (index === -1) continue;
+      deleteFormationImages(data[type][index]);
       data[type].splice(index, 1);
       found = true;
       break;

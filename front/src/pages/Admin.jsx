@@ -108,7 +108,8 @@ export default function Admin() {
   const [extraMsg, setExtraMsg] = useState('')
 
   // Contact state
-  const [contact, setContact] = useState({ phone: '', email: '', address: '', facebook: '', tiktok: '', instagram: '', latitude: '', longitude: '' })
+  const [contact, setContact] = useState({ phone: '', email: '', address: '', facebook: '', tiktok: '', instagram: '', latitude: '', longitude: '', logo: '' })
+  const [contactLogoFile, setContactLogoFile] = useState(null)
   const [contactMsg, setContactMsg] = useState('')
   const [contactErr, setContactErr] = useState('')
 
@@ -158,7 +159,7 @@ export default function Admin() {
   const loadContact = useCallback(async () => {
     try {
       const data = await getContact()
-      if (data) setContact({ phone: data.phone || '', email: data.email || '', address: data.address || '', facebook: data.facebook || '', tiktok: data.tiktok || '', instagram: data.instagram || '', latitude: data.latitude ?? '', longitude: data.longitude ?? '' })
+      if (data) setContact({ phone: data.phone || '', email: data.email || '', address: data.address || '', facebook: data.facebook || '', tiktok: data.tiktok || '', instagram: data.instagram || '', latitude: data.latitude ?? '', longitude: data.longitude ?? '', logo: data.logo || '' })
     } catch {}
   }, [])
 
@@ -298,7 +299,17 @@ export default function Admin() {
     const token = getToken()
     if (!token) { setAuthenticated(false); return }
     try {
-      await updateContact(contact, token)
+      const fd = new FormData()
+      fd.append('phone', contact.phone)
+      fd.append('email', contact.email)
+      fd.append('address', contact.address)
+      fd.append('facebook', contact.facebook || '')
+      fd.append('tiktok', contact.tiktok || '')
+      fd.append('instagram', contact.instagram || '')
+      fd.append('latitude', contact.latitude ?? '')
+      fd.append('longitude', contact.longitude ?? '')
+      if (contactLogoFile) fd.append('logo', contactLogoFile)
+      await updateContact(fd, token)
       setContactMsg('Contact mis à jour ✓')
       setTimeout(() => setContactMsg(''), 3000)
     } catch (err) { setContactErr(err.message || 'Erreur lors de l\'enregistrement') }
@@ -672,6 +683,17 @@ export default function Admin() {
         <div className="dashboard__card">
           <h2>Coordonnées</h2>
           <form onSubmit={handleSaveContact} className="dashboard__contact-form">
+            <label>Logo du site</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+              <img src={contact.logo || '/uploads/logonav.png'} alt="Logo" style={{ height: 48, borderRadius: 6, border: '1px solid #ddd' }} />
+              <label style={{ cursor: 'pointer', color: '#1976d2', fontSize: '0.875rem', fontWeight: 500 }}>
+                Changer le logo
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (file) { setContactLogoFile(file); setContact({ ...contact, logo: URL.createObjectURL(file) }) }
+                }} />
+              </label>
+            </div>
             <label>Téléphone</label>
             <input className="form__input" value={contact.phone}
               onChange={e => setContact({ ...contact, phone: e.target.value })} required />

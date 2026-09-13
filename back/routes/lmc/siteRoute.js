@@ -2,9 +2,27 @@ const express = require('express');
 const route = express.Router();
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 const authMiddleware = require('../../middleware/auth');
 
 const SITE_PATH = path.join(__dirname, '../../data/lmc/site.json');
+const UPLOAD_DIR = path.join(__dirname, '../../uploads/lmc');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+  filename: (req, file, cb) => cb(null, 'lmc-logo-' + Date.now() + path.extname(file.originalname)),
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif|webp|avif|svg/;
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (allowed.test(file.mimetype) || allowed.test(ext)) return cb(null, true);
+    cb(new Error('Seules les images sont autorisées'));
+  },
+});
 
 function readSite() {
   try {
@@ -18,14 +36,52 @@ function writeSite(data) {
   fs.writeFileSync(SITE_PATH, JSON.stringify(data, null, 2), 'utf8');
 }
 
+function deleteFile(filePath) {
+  try {
+    if (filePath && filePath.startsWith('/uploads/')) {
+      const fullPath = path.join(__dirname, '..', '..', filePath);
+      if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+    }
+  } catch {}
+}
+
+function deleteUploadedPhotos(temoignages, oldTemoignages) {
+  if (!Array.isArray(temoignages) || !Array.isArray(oldTemoignages)) return;
+  const oldPhotos = oldTemoignages.map(t => t.photo).filter(Boolean);
+  const newPhotos = temoignages.map(t => t.photo).filter(Boolean);
+  oldPhotos.forEach(photo => {
+    if (!newPhotos.includes(photo)) deleteFile(photo);
+  });
+}
+
 route.get('/', (req, res) => {
   res.json(readSite());
 });
 
-route.put('/', authMiddleware, (req, res) => {
+route.put('/', authMiddleware, upload.single('logo'), (req, res) => {
   try {
     const current = readSite();
-    const updated = { ...current, ...req.body };
+    const updated = { ...current };
+
+    Object.keys(req.body).forEach(key => {
+      if (key !== 'temoignages') updated[key] = req.body[key];
+    });
+
+    if (req.file) {
+      if (current.logo && current.logo !== '/uploads/lmc/lmc-logo.png') {
+        deleteFile(current.logo);
+      }
+      updated.logo = '/uploads/lmc/' + req.file.filename;
+    }
+
+    if (req.body.temoignages) {
+      const newTemoignages = typeof req.body.temoignages === 'string'
+        ? JSON.parse(req.body.temoignages)
+        : req.body.temoignages;
+      deleteUploadedPhotos(newTemoignages, current.temoignages || []);
+      updated.temoignages = newTemoignages;
+    }
+
     writeSite(updated);
     res.json(updated);
   } catch (err) {
