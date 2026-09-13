@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useDarkMode } from '../hooks/useDarkMode'
-import lmcLogo from '../assets/lmc.png'
+import { getSite } from '../services/api'
+import lmcLogoFallback from '../assets/lmc.png'
 
 function isLoggedIn() {
   const token = localStorage.getItem('lmc-token')
@@ -27,6 +28,7 @@ export default function Navbar() {
   const [intraFormations, setIntraFormations] = useState([])
   const [extraFormations, setExtraFormations] = useState([])
   const [loggedIn, setLoggedIn] = useState(isLoggedIn)
+  const [logo, setLogo] = useState(lmcLogoFallback)
   const { dark, toggle } = useDarkMode()
   const location = useLocation()
   const ref = useRef(null)
@@ -50,6 +52,9 @@ export default function Navbar() {
         if (Array.isArray(data)) setExtraFormations(data.sort((a, b) => (a.ordre || 0) - (b.ordre || 0)))
       })
       .catch(() => {})
+    getSite().then(data => {
+      if (data?.logo) setLogo(data.logo)
+    }).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -134,7 +139,7 @@ export default function Navbar() {
     <nav ref={ref} className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 dark:bg-[#1A1A1A]/95 shadow-md backdrop-blur-sm' : 'bg-transparent'}`}>
       <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-16 md:h-20">
         <Link to="/" className="flex items-center gap-2 no-underline">
-          <img src={lmcLogo} alt="LMC Formation" className="h-10 w-auto" />
+          <img src={logo} alt="LMC Formation" className="h-10 w-auto" />
         </Link>
 
         <button

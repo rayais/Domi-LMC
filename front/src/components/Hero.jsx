@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { getStats, getHeroSlides } from '../services/api'
-import logonav from '../assets/logonav.png'
+import { getStats, getHeroSlides, getContact } from '../services/api'
+import logonavFallback from '../assets/logonav.png'
 
 const DEFAULT_STATS = [
   { id: 1, number: '50+', label: 'Entreprises accompagnées' },
@@ -44,6 +44,7 @@ export default function Hero() {
   const [slides, setSlides] = useState([])
   const [interval, setIntervalMs] = useState(5000)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [logo, setLogo] = useState(logonavFallback)
 
   useEffect(() => {
     getStats()
@@ -55,6 +56,9 @@ export default function Hero() {
         if (data?.interval) setIntervalMs(data.interval)
       })
       .catch(() => {})
+    getContact().then(data => {
+      if (data?.logo) setLogo(data.logo)
+    }).catch(() => {})
   }, [])
 
   const sortedSlides = [...slides].sort((a, b) => (a.ordre || 0) - (b.ordre || 0))
@@ -86,7 +90,7 @@ export default function Hero() {
       )}
       {!hasSlides && <div className="hero__overlay" />}
       <div className="hero__content">
-        <img src={logonav} alt="GOOD START DOMICILIATION" className="hero__logo" />
+        <img src={logo} alt="GOOD START DOMICILIATION" className="hero__logo" />
         <h1 className="hero__title">GOOD START</h1>
         <p className="hero__brand">DOMICILIATION</p>
         <p className="hero__brand-sub">GSD</p>

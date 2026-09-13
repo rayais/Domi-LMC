@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import logonav from '../assets/logonav.png'
+import { getContact } from '../services/api'
+import logonavFallback from '../assets/logonav.png'
 
 const navLinks = [
   { label: 'Accueil', href: '#hero' },
@@ -19,6 +20,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [authed, setAuthed] = useState(isAuthed)
+  const [logo, setLogo] = useState(logonavFallback)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -29,6 +31,9 @@ export default function Navbar() {
   useEffect(() => {
     const onFocus = () => setAuthed(isAuthed())
     window.addEventListener('focus', onFocus)
+    getContact().then(data => {
+      if (data?.logo) setLogo(data.logo)
+    }).catch(() => {})
     return () => window.removeEventListener('focus', onFocus)
   }, [])
 
@@ -36,7 +41,7 @@ export default function Navbar() {
     <nav className={`navbar${scrolled ? ' navbar--scrolled' : ''}`}>
       <div className="navbar__inner">
         <a href="#hero" className="navbar__logo">
-          <img src={logonav} alt="GSD" className="navbar__logo-img" />
+          <img src={logo} alt="GSD" className="navbar__logo-img" />
           <div className="navbar__logo-text">
             <span className="navbar__logo-gsd">GSD</span>
             <span className="navbar__logo-full">GOOD START DOMICILIATION</span>

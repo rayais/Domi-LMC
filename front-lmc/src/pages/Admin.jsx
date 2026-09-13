@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import lmcLogo from '../assets/lmc.png'
+import lmcLogoFallback from '../assets/lmc.png'
 import {
   login,
   getFormations as getLmcFormations, createFormation as createLmcFormation,
@@ -43,7 +43,7 @@ function LoginForm({ onLogin }) {
     <div className="min-h-screen flex items-center justify-center bg-bg dark:bg-[#1A1A1A] px-4">
       <div className="bg-white dark:bg-[#2A2A2A] rounded-xl shadow-lg p-8 w-full max-w-md border border-border dark:border-gray-600">
         <div className="flex items-center justify-center gap-2 mb-6">
-          <img src={lmcLogo} alt="LMC Formation" className="h-12 w-auto" />
+          <img src={siteLogo} alt="LMC Formation" className="h-12 w-auto" />
         </div>
         <h1 className="text-xl font-bold text-secondary dark:text-white text-center mb-2">Dashboard LMC</h1>
         <p className="text-sm text-text-light dark:text-gray-400 text-center mb-6">Entrez le mot de passe pour accéder</p>
@@ -72,6 +72,7 @@ export default function Admin() {
   const [lmcFormations, setLmcFormations] = useState({ intra: [], extra: [] })
   const [lmcEdit, setLmcEdit] = useState(null)
   const [lmcForm, setLmcForm] = useState({ type: 'extra', nom: '', slug: '', module: '', description: '', descriptionLongue: '', duree: '', publicCible: '', objectifs: '', ordre: '1', afficherAccueil: false })
+  const [siteLogo, setSiteLogo] = useState(lmcLogoFallback)
   const [lmcLogo, setLmcLogo] = useState(null)
   const [lmcVitrine, setLmcVitrine] = useState(null)
   const [lmcGalerie, setLmcGalerie] = useState(null)
@@ -122,6 +123,7 @@ export default function Admin() {
   const loadSite = useCallback(async () => {
     try {
       const data = await getLmcSite()
+      if (data?.logo) setSiteLogo(data.logo)
       if (data) setLmcSite({
         nom: data.nom || '',
         slogan: data.slogan || '',

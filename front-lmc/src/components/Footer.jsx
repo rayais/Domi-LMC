@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getSite } from '../services/api'
-import lmcLogo from '../assets/lmc.png'
+import lmcLogoFallback from '../assets/lmc.png'
 
 export default function Footer() {
   const [site, setSite] = useState(null)
@@ -19,7 +19,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src={lmcLogo} alt="LMC Formation" className="h-10 w-auto" />
+              <img src={site?.logo || lmcLogoFallback} alt="LMC Formation" className="h-10 w-auto" />
             </div>
             <p className="text-gray-400 text-sm max-w-sm">
               {site?.description || 'Centre de formation professionnelle dédié à l\'accompagnement des entreprises et des particuliers dans leur développement.'}
