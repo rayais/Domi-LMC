@@ -1,4 +1,4 @@
-const { readData } = require('../data/helper');
+const jwt = require('jsonwebtoken');
 
 module.exports = function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -6,9 +6,11 @@ module.exports = function authMiddleware(req, res, next) {
     return res.status(401).json({ error: 'Non autorisé' });
   }
   const token = authHeader.split(' ')[1];
-  const ADMIN_PASSWORD = readData('password.json');
-  if (token !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'Token invalide' });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Token invalide ou expiré' });
   }
-  next();
 };

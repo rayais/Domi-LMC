@@ -43,7 +43,7 @@ function LoginForm({ onLogin }) {
     <div className="min-h-screen flex items-center justify-center bg-bg dark:bg-[#1A1A1A] px-4">
       <div className="bg-white dark:bg-[#2A2A2A] rounded-xl shadow-lg p-8 w-full max-w-md border border-border dark:border-gray-600">
         <div className="flex items-center justify-center gap-2 mb-6">
-          <img src={siteLogo} alt="LMC Formation" className="h-12 w-auto" />
+          <img src={lmcLogoFallback} alt="LMC Formation" className="h-12 w-auto" />
         </div>
         <h1 className="text-xl font-bold text-secondary dark:text-white text-center mb-2">Dashboard LMC</h1>
         <p className="text-sm text-text-light dark:text-gray-400 text-center mb-6">Entrez le mot de passe pour accéder</p>

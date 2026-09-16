@@ -59,6 +59,34 @@ export function getContact() {
   return request('/contact')
 }
 
+export async function sendMessage(data) {
+  return request('/message', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+}
+
+export function getMessages(token) {
+  return request('/messages', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+}
+
+export function deleteMessage(id, token) {
+  return request(`/message/${id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  })
+}
+
+export function markMessageRead(id, token) {
+  return request(`/message/${id}/read`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}` },
+  })
+}
+
 export function updateContact(formData, token) {
   return fetch('/contact', {
     method: 'PUT',

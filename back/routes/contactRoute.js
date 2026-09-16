@@ -1,6 +1,5 @@
 const express = require('express');
 const route = express.Router();
-const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const authMiddleware = require('../middleware/auth');
@@ -10,21 +9,8 @@ const UPLOAD_DIR = path.join(__dirname, '../uploads');
 
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-  filename: (req, file, cb) => cb(null, 'gsd-logo-' + Date.now() + path.extname(file.originalname)),
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp|avif|svg/;
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (allowed.test(file.mimetype) || allowed.test(ext)) return cb(null, true);
-    cb(new Error('Seules les images sont autorisées'));
-  },
-});
+const { uploadGsd } = require('../middleware/upload');
+const upload = uploadGsd;
 
 function readContact() {
   try {

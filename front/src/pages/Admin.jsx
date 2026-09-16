@@ -9,6 +9,7 @@ import {
   getStats, updateStats, changePassword,
   getTheme, updateTheme,
   getHeroSlides, updateHeroSlides, uploadHeroSlide, deleteHeroSlide,
+  getMessages, deleteMessage, markMessageRead,
 } from '../services/api'
 
 function getToken() {
@@ -82,7 +83,7 @@ const DEFAULT_THEME = Object.fromEntries(
   Object.keys(COLOR_LABELS).map(k => [k, getCSSVar(k)])
 )
 
-const TABS = ['Articles', 'Extras', 'Contact', 'À propos', 'Statistiques', 'Hero', 'Theme']
+const TABS = ['Articles', 'Extras', 'Contact', 'À propos', 'Statistiques', 'Hero', 'Theme', 'Messages']
 const DEFAULT_STATS = [
   { id: 1, number: '50+', label: 'Entreprises accompagnées' },
   { id: 2, number: '15+', label: "Années d'expérience" },
@@ -140,6 +141,10 @@ export default function Admin() {
   const [heroUploading, setHeroUploading] = useState(false)
   const [dragIndex, setDragIndex] = useState(null)
 
+  // Messages state
+  const [messages, setMessages] = useState([])
+  const [msgMsg, setMsgMsg] = useState('')
+
   const [loading, setLoading] = useState(true)
 
   const loadArticles = useCallback(async () => {
@@ -192,9 +197,18 @@ export default function Admin() {
     } catch {}
   }, [])
 
+  const loadMessages = useCallback(async () => {
+    const token = getToken()
+    if (!token) return
+    try {
+      const data = await getMessages(token)
+      if (Array.isArray(data)) setMessages(data)
+    } catch { setMessages([]) }
+  }, [])
+
   useEffect(() => {
     if (!authenticated) { setLoading(false); return }
-    Promise.all([loadArticles(), loadExtras(), loadContact(), loadAbout(), loadStats(), loadTheme(), loadHeroSlides()]).finally(() => setLoading(false))
+    Promise.all([loadArticles(), loadExtras(), loadContact(), loadAbout(), loadStats(), loadTheme(), loadHeroSlides(), loadMessages()]).finally(() => setLoading(false))
   }, [authenticated])
 
   // ---- Articles ----
@@ -463,6 +477,27 @@ export default function Admin() {
     localStorage.removeItem('tokenExpiry')
     setAuthenticated(false)
     setEdit(null)
+  }
+
+  async function handleDeleteMessage(id) {
+    if (!confirm('Supprimer ce message ?')) return
+    const token = getToken()
+    if (!token) { setAuthenticated(false); return }
+    try {
+      await deleteMessage(id, token)
+      setMsgMsg('Message supprimé ✓')
+      setTimeout(() => setMsgMsg(''), 3000)
+      loadMessages()
+    } catch (err) { setMsgMsg(err.message || 'Erreur') }
+  }
+
+  async function handleMarkRead(id) {
+    const token = getToken()
+    if (!token) { setAuthenticated(false); return }
+    try {
+      await markMessageRead(id, token)
+      loadMessages()
+    } catch {}
   }
 
   if (!authenticated) return <LoginForm onLogin={() => setAuthenticated(true)} />
@@ -878,6 +913,45 @@ export default function Admin() {
           </div>
           {themeMsg && <p className="dashboard__msg" style={{ color: '#2e7d32' }}>{themeMsg}</p>}
           {themeErr && <p className="dashboard__msg" style={{ color: '#d32f2f' }}>{themeErr}</p>}
+        </div>
+      )}
+
+      {/* ---- TAB: Messages ---- */}
+      {tab === 'Messages' && (
+        <div className="dashboard__card">
+          <h2>Messages de contact ({messages.length})</h2>
+          {messages.length === 0 ? (
+            <p className="dashboard__msg" style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Aucun message reçu</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {messages.map(m => (
+                <div key={m.id}
+                  style={{
+                    border: `${m.lu ? '1px solid #e0e0e0' : '2px solid var(--color-primary, #1976d2)'}`,
+                    borderRadius: '8px', padding: '1rem',
+                    background: m.lu ? '#fff' : 'var(--color-bg, #f0f7ff)',
+                  }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 600, margin: 0 }}>
+                        {m.nom} <span style={{ fontWeight: 400, opacity: 0.7 }}>&lt;{m.email}&gt;</span>
+                      </p>
+                      {m.sujet && <p style={{ fontWeight: 500, margin: '0.25rem 0' }}>{m.sujet}</p>}
+                      <p style={{ opacity: 0.85, margin: '0.25rem 0' }}>{m.message}</p>
+                      <small style={{ opacity: 0.6 }}>{new Date(m.date).toLocaleDateString('fr', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</small>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+                      {!m.lu && (
+                        <button className="dashboard__btn dashboard__btn--edit" onClick={() => handleMarkRead(m.id)}>Marquer lu</button>
+                      )}
+                      <button className="dashboard__btn dashboard__btn--del" onClick={() => handleDeleteMessage(m.id)}>Supprimer</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {msgMsg && <p className="dashboard__msg" style={{ color: msgMsg.includes('✓') ? '#2e7d32' : '#d32f2f' }}>{msgMsg}</p>}
         </div>
       )}
     </div>

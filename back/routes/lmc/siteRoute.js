@@ -2,27 +2,15 @@ const express = require('express');
 const route = express.Router();
 const fs = require('fs');
 const path = require('path');
-const multer = require('multer');
 const authMiddleware = require('../../middleware/auth');
 
 const SITE_PATH = path.join(__dirname, '../../data/lmc/site.json');
 const UPLOAD_DIR = path.join(__dirname, '../../uploads/lmc');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-  filename: (req, file, cb) => cb(null, 'lmc-logo-' + Date.now() + path.extname(file.originalname)),
-});
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp|avif|svg/;
-    const ext = path.extname(file.originalname).toLowerCase();
-    if (allowed.test(file.mimetype) || allowed.test(ext)) return cb(null, true);
-    cb(new Error('Seules les images sont autorisées'));
-  },
-});
+const { uploadLmc } = require('../../middleware/upload');
+const upload = uploadLmc;
 
 function readSite() {
   try {

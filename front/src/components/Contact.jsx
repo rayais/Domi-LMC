@@ -1,18 +1,33 @@
 import { useState, useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { getContact } from '../services/api'
+import { getContact, sendMessage } from '../services/api'
 
 export default function Contact() {
   const [contact, setContact] = useState(null)
   const mapRef = useRef(null)
   const tileRef = useRef(null)
 
+  const [form, setForm] = useState({ nom: '', email: '', sujet: '', message: '' })
+  const [status, setStatus] = useState('')
+
   useEffect(() => {
     getContact()
       .then(data => { if (data) setContact(data) })
       .catch(() => {})
   }, [])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setStatus('')
+    try {
+      await sendMessage(form)
+      setStatus('success')
+      setForm({ nom: '', email: '', sujet: '', message: '' })
+    } catch (err) {
+      setStatus('error')
+    }
+  }
 
   useEffect(() => {
     if (!contact || contact.latitude == null || contact.longitude == null) return
@@ -44,12 +59,18 @@ export default function Contact() {
           Prêt à démarrer ? Parlons de votre projet
         </p>
         <div className="contact__grid">
-          <form className="contact__form">
-            <input type="text" placeholder="Nom complet" className="form__input" required />
-            <input type="email" placeholder="Email" className="form__input" required />
-            <input type="text" placeholder="Sujet" className="form__input" />
-            <textarea placeholder="Votre message..." className="form__input form__textarea" rows="5" required />
+          <form className="contact__form" onSubmit={handleSubmit}>
+            <input type="text" placeholder="Nom complet" className="form__input" required
+              value={form.nom} onChange={e => setForm({ ...form, nom: e.target.value })} />
+            <input type="email" placeholder="Email" className="form__input" required
+              value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+            <input type="text" placeholder="Sujet" className="form__input"
+              value={form.sujet} onChange={e => setForm({ ...form, sujet: e.target.value })} />
+            <textarea placeholder="Votre message..." className="form__input form__textarea" rows="5" required
+              value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
             <button type="submit" className="btn btn--primary">Envoyer</button>
+            {status === 'success' && <p style={{ color: '#2e7d32', marginTop: '0.5rem' }}>Message envoyé avec succès</p>}
+            {status === 'error' && <p style={{ color: '#d32f2f', marginTop: '0.5rem' }}>Erreur lors de l'envoi, réessayez.</p>}
           </form>
           <div className="contact__info">
             <div className="contact__item">

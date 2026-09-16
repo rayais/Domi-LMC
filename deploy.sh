@@ -61,7 +61,7 @@ server {
     }
 
     # Backend API proxy
-    location ~ ^/(articles|article|login|send-email|about|contact|extras|extra|stats|theme|change-password|hero-slides|uploads) {
+    location ~ ^/(articles|article|login|about|contact|extras|extra|stats|theme|change-password|hero-slides|messages|message|uploads) {
         proxy_pass http://127.0.0.1:4911$request_uri;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
